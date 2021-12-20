@@ -50,3 +50,57 @@ Program o zadaniach współbieżnych zaimplementowany w języku Ada przy pomocy 
       end loop;
    end Buffor;
 ```
+
+## Proces Pisarza
+
+```
+ task body Pisarz is
+      delayTime : Integer;
+      value : Integer;
+      N : Integer;
+      i : Integer;
+   begin
+      N := 20;
+      i := 1;
+      for i in 1..N loop
+         -- sekcja lokalna BEG
+         delayTime := RandomInt(1);
+         Delay(Standard.Duration(delayTime));
+         value := RandomInt(9);
+         -- sekcja lokalna END
+
+         -- sekcja krytyczna BEG
+         Buffor.pisz(value);
+         -- sekcja krytyczna END
+
+      end loop;
+
+   end Pisarz;
+
+```
+
+## Proces Czytelnika
+
+```
+task body Czytelnik is
+      N : Integer;
+      i : Integer;
+      delayTime : Integer;
+      value : Integer;
+   begin
+      N := 20;
+      i := 1;
+      for i in 1..N loop
+
+         -- sekcja lokalna BEG
+         delayTime := RandomInt(2);
+         Delay(Standard.Duration(delayTime));
+         -- sekcja lokalna END
+
+         -- sekcja krytyczna BEG
+         Buffor.czytaj(value);
+         -- sekcja krytyczna END
+      end loop;
+      Buffor.koniec;
+   end Czytelnik;
+```
